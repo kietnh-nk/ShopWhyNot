@@ -46,11 +46,11 @@ class HomeController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function maintenance()
-    {
-        $setting = Setting::first();
-        return view('client.maintenance', ['setting' => $setting]);
-    }
+    // public function maintenance()
+    // {
+    //     $setting = Setting::first();
+    //     return view('client.maintenance', ['setting' => $setting]);
+    // }
 
     /**
      * Hiển thị trang giới thiệu
@@ -60,9 +60,9 @@ class HomeController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function introduction()
-    {
-        $setting = Setting::first();
-        return view('client.introduction', ['setting' => $setting]);
-    }
+    // public function introduction()
+    // {
+    //     $setting = Setting::first();
+    //     return view('client.introduction', ['setting' => $setting]);
+    // }
 }
