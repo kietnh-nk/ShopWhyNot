@@ -36,7 +36,51 @@ Route::middleware(['auth.admin'])->group(function () {
         ->name('admin.verify.success');
 });
 
+Route::middleware(['auth.admin', 'admin.verified'])->group(function () {
+    Route::get('/', [DashboardController::class, "index"])->name('admin.home');
+    Route::get('/statistical', [DashboardController::class, "statistical"])->name('admin.statistical');
 
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/', [UserController::class, "index"])->name('admin.users_index');
+        Route::get('create', [UserController::class, "create"])->name('admin.users_create');
+        Route::post('create', [UserController::class, "store"])->name('admin.users_store');
+        Route::get('edit/{user}', [UserController::class, "edit"])->name('admin.users_edit');
+        Route::post('update/{user}', [UserController::class, "update"])->name('admin.users_update');
+        Route::post('delete', [UserController::class, "delete"])->name('admin.users_delete');
+    });
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('/change-profile', [ProfileController::class, "changeProfile"])->name('admin.profile_change-profile');
+        Route::post('/change-profile', [ProfileController::class, "updateProfile"])->name('admin.profile_update-profile');
+        Route::get('/change-password', [ProfileController::class, "changePassword"])->name('admin.profile_change-password');
+        Route::post('/change-password', [ProfileController::class, "updatePassword"])->name('admin.profile_update-password');
+    });
+
+    Route::middleware('auth.admin_author:admin')->group(function () {
+
+        Route::group(['prefix' => 'setting'], function () {
+            Route::get('/', [SettingController::class, "index"])->name('admin.setting_index');
+            Route::post('/', [SettingController::class, "store"])->name('admin.setting_index');
+        });
+
+        Route::group(['prefix' => 'payments'], function () {
+            Route::get('/', [PaymentMethodController::class, "index"])->name('admin.payments_index');
+            Route::get('create', [PaymentMethodController::class, "create"])->name('admin.payments_create');
+            Route::post('create', [PaymentMethodController::class, "store"])->name('admin.payments_store');
+            Route::get('edit/{payment}', [PaymentMethodController::class, "edit"])->name('admin.payments_edit');
+            Route::post('edit/{payment}', [PaymentMethodController::class, "update"])->name('admin.payments_update');
+        });
+
+        Route::group(['prefix' => 'staffs'], function () {
+            Route::get('/', [AdminController::class, "index"])->name('admin.staffs_index');
+            Route::get('create', [AdminController::class, "create"])->name('admin.staffs_create');
+            Route::post('create', [AdminController::class, "store"])->name('admin.staffs_store');
+            Route::get('edit/{user}', [AdminController::class, "edit"])->name('admin.staffs_edit');
+            Route::post('edit/{user}', [AdminController::class, "update"])->name('admin.staffs_update');
+            Route::post('delete', [AdminController::class, "delete"])->name('admin.staffs_delete');
+        });
+    });
+});
 Route::middleware('guest:admin')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, "create"])->name('admin.login');
     Route::post('login', [AuthenticatedSessionController::class, "store"]);
