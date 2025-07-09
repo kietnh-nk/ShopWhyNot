@@ -25,7 +25,6 @@ class BrandController extends Controller
     {
         $this->brandService = $brandService;
     }
-
     public function index()
     {
         return view('admin.brand.index', $this->brandService->index());
