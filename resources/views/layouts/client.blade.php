@@ -136,14 +136,14 @@
                 <li>
                   <a href="{{ route('user.home') }}">Trang Chủ</a>
                 </li>
-                {{-- @foreach (category_header() as $category)
+                @foreach (category_header() as $category)
                   <li>
                     <a href="{{ route('user.products', $category->slug) }}">{{ $category->name }}</a>
                   </li>
-                @endforeach --}}
-                {{-- <li>
+                @endforeach
+                <li>
                     <a href="{{ route('user.introduction') }}">Giới Thiệu</a>
-                </li> --}}
+                </li>
               </ul>
             </div>
             <!-- /.nav-collapse -->
@@ -184,7 +184,7 @@
     <div class="footer pt_60">
       <div class="container">
         <div class="row">
-          {{-- <div class="footer-top pb_60 mb_30">
+          <div class="footer-top pb_60 mb_30">
             <div class="col-xs-12 col-sm-6">
               <div class="footer-logo"> <a href="{{ route('user.home') }}"> <img src="{{ asset('asset/client/images/footer-logo.png') }}" alt="OYEENok"> </a>
               </div>
@@ -219,7 +219,7 @@
               </div>
             </div>
             <!-- =====  testimonial end ===== -->
-          </div> --}}
+          </div>
         </div>
         <div class="row">
           <div class="col-md-3 footer-block">
