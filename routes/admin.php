@@ -79,6 +79,22 @@ Route::middleware(['auth.admin', 'admin.verified'])->group(function () {
             Route::post('edit/{user}', [AdminController::class, "update"])->name('admin.staffs_update');
             Route::post('delete', [AdminController::class, "delete"])->name('admin.staffs_delete');
         });
+         Route::group(['prefix' => 'brands'], function(){
+            Route::get('/', [BrandController::class, "index"])->name('admin.brands_index');
+            Route::get('create', [BrandController::class, "create"])->name('admin.brands_create');
+            Route::post('create', [BrandController::class, "store"])->name('admin.brands_store');
+            Route::get('edit/{brand}', [BrandController::class, "edit"])->name('admin.brands_edit');
+            Route::post('update/{brand}', [BrandController::class, "update"])->name('admin.brands_update');
+            Route::post('delete', [BrandController::class, "delete"])->name('admin.brands_delete');
+        });
+        Route::group(['prefix' => 'categories'], function(){
+            Route::get('/', [CategoryController::class, "index"])->name('admin.category_index');
+            Route::get('create', [CategoryController::class, "create"])->name('admin.category_create');
+            Route::post('create', [CategoryController::class, "store"])->name('admin.category_store');
+            Route::get('edit/{category}', [CategoryController::class, "edit"])->name('admin.category_edit');
+            Route::post('update/{category}', [CategoryController::class, "update"])->name('admin.category_update');
+            Route::post('delete', [CategoryController::class, "delete"])->name('admin.category_delete');
+        });
     });
 });
 Route::middleware('guest:admin')->group(function () {
