@@ -142,7 +142,7 @@ class CartService
             "weight" => 1000,
             "width" => 15
         ];
-        
+
         $response = Http::withHeaders([
             'token' => '24d5b95c-7cde-11ed-be76-3233f989b8f3'
         ])->get('https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee', $dataGetFee);
