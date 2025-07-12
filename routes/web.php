@@ -8,7 +8,9 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductDetailController;
+use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CartController;
 
 Route::middleware(['maintenance_active'])->group(function () {
     //Hiển thị trang bảo trì website
@@ -55,6 +57,21 @@ Route::middleware(['maintenance'])->group(function () {
     
     });
 });
+Route::middleware(['auth.user'])->group(function () {
+        //BE: xử lý logout
+        Route::get('logout', [AuthenticatedSessionController::class, "destroy"])->name('user.logout');
+        //BE: xử lý khi đánh sản phẩm
+        Route::post('product-review/{product}', [ProductReviewController::class, "store"])->name('product_review.store');
+
+        Route::group(['prefix' => 'cart'], function(){
+            //FE: Trang giỏ hàng
+            Route::get('/', [CartController::class, 'index'])->name('cart.index');
+            Route::post('add-to-cart', [CartController::class, 'store'])->name('cart.store');
+            Route::post('update-cart', [CartController::class, 'update'])->name('cart.update');
+            Route::get('delete{id}', [CartController::class, 'delete'])->name('cart.delete');
+            Route::get('clear', [CartController::class, 'clearAllCart'])->name('cart.clear');
+        });
+    });
 
 
 
