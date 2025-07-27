@@ -8,12 +8,17 @@
     <!-- =====  BANNER STRAT  ===== -->
     <div class="banner">
       <div class="main-banner owl-carousel">
-        <div class="item">
-          <a href="#">
-            <img src="{{ asset('asset/client/images/main_banner1.jpg') }}" alt="Main Banner" class="img-responsive" />
-          </a>
+            <div class="item">
+                <a href="#"><img src="{{ asset('asset/client/images/main_banner1.jpg') }}" class="img-responsive" /></a>
+            </div>
+            <div class="item">
+                <a href="#"><img src="{{ asset('asset/client/images/main_banner2.jpg') }}" class="img-responsive" /></a>
+            </div>
+            <div class="item">
+                <a href="#"><img src="{{ asset('asset/client/images/main_banner3.jpg') }}"
+                        class="img-responsive" /></a>
+            </div>
         </div>
-      </div>
     </div>
     <!-- =====  BANNER END  ===== -->
     <!-- =====  CONTAINER START  ===== -->

@@ -310,6 +310,25 @@
   <script src="{{ asset('asset/admin/plugins/jquery-validation/jquery.validate.js') }}"></script>
   
   @vite(['resources/admin/js/toast-message.js'])
+  <!-- Owl Carousel JS -->
+<script src="{{ asset('asset/client/js/owl.carousel.min.js') }}"></script>
+
+<!-- Khởi tạo Owl Carousel -->
+<script>
+  $(document).ready(function(){
+    $('.main-banner').owlCarousel({
+      items: 1,
+      loop: true,
+      autoplay: true,
+      autoplayTimeout: 4000,
+      autoplayHoverPause: true,
+      dots: true,
+      nav: false,
+      smartSpeed: 1000, // tốc độ chuyển động (ms)
+      slideTransition: 'linear' // kiểu chuyển động
+    });
+  });
+</script>
 </body>
 
 </html>
