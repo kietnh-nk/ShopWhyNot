@@ -103,6 +103,30 @@ Route::middleware(['auth.admin', 'admin.verified'])->group(function () {
             Route::post('update/{category}', [CategoryController::class, "update"])->name('admin.category_update');
             Route::post('delete', [CategoryController::class, "delete"])->name('admin.category_delete');
         });
+        Route::group(['prefix' => 'colors'], function(){
+            Route::get('/', [ColorController::class, "index"])->name('admin.colors_index');
+            Route::get('create', [ColorController::class, "create"])->name('admin.colors_create');
+            Route::post('create', [ColorController::class, "store"])->name('admin.colors_store');
+            Route::get('edit/{color}', [ColorController::class, "edit"])->name('admin.colors_edit');
+            Route::post('update/{color}', [ColorController::class, "update"])->name('admin.colors_update');
+            Route::post('delete', [ColorController::class, "delete"])->name('admin.colors_delete');
+        });
+        Route::group(['prefix' => 'orders'], function(){
+            Route::get('/', [OrderController::class, "index"])->name('admin.orders_index');
+            Route::get('create', [OrderController::class, "create"])->name('admin.orders_create');
+            Route::post('create', [OrderController::class, "store"])->name('admin.orders_store');
+            Route::get('edit/{order}', [OrderController::class, "edit"])->name('admin.orders_edit');
+            Route::post('update/{order}', [OrderController::class, "update"])->name('admin.orders_update');
+            Route::post('delete', [OrderController::class, "delete"])->name('admin.orders_delete');
+        });
+        Route::group(['prefix' => 'sizes'], function(){
+            Route::get('/', [SizeController::class, "index"])->name('admin.sizes_index');
+            Route::get('create', [SizeController::class, "create"])->name('admin.sizes_create');
+            Route::post('create', [SizeController::class, "store"])->name('admin.sizes_store');
+            Route::get('edit/{size}', [SizeController::class, "edit"])->name('admin.sizes_edit');
+            Route::post('update/{size}', [SizeController::class, "update"])->name('admin.sizes_update');
+            Route::post('delete', [SizeController::class, "delete"])->name('admin.sizes_delete');
+    });
     });
 });
 Route::middleware('guest:admin')->group(function () {
