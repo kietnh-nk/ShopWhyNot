@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!function_exists('TextLayoutSidebar')) {
     function TextLayoutSidebar($key)
     {
@@ -9,7 +9,7 @@ if (!function_exists('TextLayoutSidebar')) {
             "website_management"    => "Quản Lý Website",
             "order"                 => "Đơn Hàng",
             "category"              => "Danh Mục",
-            "product"               => "Sản Phẩm",    
+            "product"               => "Sản Phẩm",
             "producer"              => "Nhà Sản Xuất",
             "payment"               => "Thanh Toán",
             "customer"              => "Khách Hàng",
@@ -31,6 +31,9 @@ if (!function_exists('TextLayoutSidebar')) {
             "order"                 => "Đơn Hàng",
             "size"                  => "Kích Thước",
             "setting"               => "Cấu hình",
+            "voucher"               => "Mã Giảm Giá",
+            "edit_voucher"          => "Chỉnh Sửa Mã Giảm Giá",
+            "create_voucher"        => "Tạo Mã Giảm Giá",
         ];
         return $const[$key];
     }
@@ -44,7 +47,7 @@ if (!function_exists('TextLayoutTitle')) {
             "statistical"           => "Bảng Thống Kê",
             "order"                 => "Quản Lý Đơn Hàng",
             "category"              => "Danh Mục Sản Phẩm",
-            "product"               => "Quản Lý Sản Phẩm",    
+            "product"               => "Quản Lý Sản Phẩm",
             "producer"              => "Quản Lý Nhà Sản Xuất",
             "payment"               => "Quản Lý Thanh Toán",
             "customer"              => "Quản Lý Khách Hàng",
@@ -76,9 +79,11 @@ if (!function_exists('TextLayoutTitle')) {
             "edit_size"             => "Chỉnh Sửa Kích Thước",
             "edit_staff"            => "Chỉnh Sửa Nhân Sự",
             "edit_product"          => "Chỉnh Sửa Sản Phẩm",
-            "edit_payment"          => "Chỉnh Sửa Phương Thức Thanh Toán"
+            "edit_payment"          => "Chỉnh Sửa Phương Thức Thanh Toán",
+            "voucher"               => "Quản Lý Mã Giảm Giá",
+            "edit_voucher"          => "Chỉnh Sửa Mã Giảm Giá",
+            "create_voucher"        => "Tạo Mã Giảm Giá",
         ];
         return $const[$index];
     }
 }
-?>

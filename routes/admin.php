@@ -19,7 +19,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VoucherController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('test', function(){
+Route::get('test', function () {
     return view('admin.Test.main');
 });
 Route::middleware(['auth.admin'])->group(function () {
@@ -79,7 +79,7 @@ Route::middleware(['auth.admin', 'admin.verified'])->group(function () {
             Route::post('edit/{user}', [AdminController::class, "update"])->name('admin.staffs_update');
             Route::post('delete', [AdminController::class, "delete"])->name('admin.staffs_delete');
         });
-         Route::group(['prefix' => 'brands'], function(){
+        Route::group(['prefix' => 'brands'], function () {
             Route::get('/', [BrandController::class, "index"])->name('admin.brands_index');
             Route::get('create', [BrandController::class, "create"])->name('admin.brands_create');
             Route::post('create', [BrandController::class, "store"])->name('admin.brands_store');
@@ -87,7 +87,15 @@ Route::middleware(['auth.admin', 'admin.verified'])->group(function () {
             Route::post('update/{brand}', [BrandController::class, "update"])->name('admin.brands_update');
             Route::post('delete', [BrandController::class, "delete"])->name('admin.brands_delete');
         });
-        Route::group(['prefix' => 'categories'], function(){
+        Route::group(['prefix' => 'vouchers'], function () {
+            Route::get('/', [VoucherController::class, "index"])->name('admin.vouchers_index');
+            Route::get('create', [VoucherController::class, "create"])->name('admin.vouchers_create');
+            Route::post('create', [VoucherController::class, "store"])->name('admin.vouchers_store');
+            Route::get('edit/{voucher}', [VoucherController::class, "edit"])->name('admin.vouchers_edit');
+            Route::post('update/{voucher}', [VoucherController::class, "update"])->name('admin.vouchers_update');
+            Route::post('delete', [VoucherController::class, "delete"])->name('admin.vouchers_delete');
+        });
+        Route::group(['prefix' => 'categories'], function () {
             Route::get('/', [CategoryController::class, "index"])->name('admin.category_index');
             Route::get('create', [CategoryController::class, "create"])->name('admin.category_create');
             Route::post('create', [CategoryController::class, "store"])->name('admin.category_store');
