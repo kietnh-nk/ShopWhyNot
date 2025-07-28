@@ -3,111 +3,52 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\StoreVoucherRequest;
+use App\Http\Requests\Admin\UpdateVoucherRequest;
+
 use App\Models\Voucher;
-use App\Helpers\TextSystemConst;
+use App\Services\VoucherService;
+use Illuminate\Http\Request;
 
 class VoucherController extends Controller
 {
+    /**
+     * @var VoucherService
+     */
+    protected $voucherService;
+
+    public function __construct(VoucherService $voucherService)
+    {
+        $this->voucherService = $voucherService;
+    }
+
     public function index()
     {
-        $vouchers = Voucher::paginate(10);
-        $title = 'Danh sách voucher';
-        return view('admin.vouchers.index', compact('vouchers', 'title'));
+        return view('admin.vouchers.index', $this->voucherService->index());
     }
 
     public function create()
     {
-        $title = 'Thêm voucher';
-        return view('admin.vouchers.create', compact('title'));
+        return view('admin.vouchers.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreVoucherRequest $request)
     {
-        $request->validate([
-            'code' => 'required|unique:vouchers,code',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'quantity' => 'required|integer|min:1',
-            'discount_percentage' => 'required|numeric',
-            'max_discount_amount' => 'required|numeric',
-        ], [
-            'code.required' => 'Mã voucher không được bỏ trống.',
-            'code.unique' => 'Mã voucher đã tồn tại.',
-            'start_date.required' => 'Ngày bắt đầu không được bỏ trống.',
-            'start_date.date' => 'Ngày bắt đầu phải là một ngày hợp lệ.',
-            'start_date.after_or_equal' => 'Ngày bắt đầu không được nằm trong quá khứ.',
-            'end_date.required' => 'Ngày kết thúc không được bỏ trống.',
-            'end_date.date' => 'Ngày kết thúc phải là một ngày hợp lệ.',
-            'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu.',
-            'quantity.required' => 'Số lượng không được bỏ trống.',
-            'quantity.integer' => 'Số lượng phải là một số nguyên.',
-            'quantity.min' => 'Số lượng phải lớn hơn 0.',
-            'discount_percentage.required' => 'Giảm giá không được bỏ trống.',
-            'discount_percentage.numeric' => 'Giảm giá phải là một số.',
-            'max_discount_amount.required' => 'Giảm tối đa không được bỏ trống.',
-            'max_discount_amount.numeric' => 'Giảm tối đa phải là một số.',
-        ]);
-        Voucher::create($request->all());
-        return redirect()->route('admin.vouchers_index')->with('success', 'Thêm thành công.');
+        return $this->voucherService->store($request);
     }
 
     public function edit(Voucher $voucher)
     {
-        $title = 'Sửa voucher';
-        return view('admin.vouchers.edit', compact('voucher', 'title'));
+        return view('admin.vouchers.edit', $this->voucherService->edit($voucher));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateVoucherRequest $request, Voucher $voucher)
     {
-        $request->validate([
-            'code' => 'required|unique:vouchers,code,' . $id,
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'quantity' => 'required|integer|min:1',
-            'discount_percentage' => 'required|numeric',
-            'max_discount_amount' => 'required|numeric',
-        ], [
-            'code.required' => 'Mã voucher không được bỏ trống.',
-            'code.unique' => 'Mã voucher đã tồn tại.',
-            'start_date.required' => 'Ngày bắt đầu không được bỏ trống.',
-            'start_date.date' => 'Ngày bắt đầu phải là một ngày hợp lệ.',
-            'start_date.after_or_equal' => 'Ngày bắt đầu không được nằm trong quá khứ.',
-            'end_date.required' => 'Ngày kết thúc không được bỏ trống.',
-            'end_date.date' => 'Ngày kết thúc phải là một ngày hợp lệ.',
-            'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu.',
-            'quantity.required' => 'Số lượng không được bỏ trống.',
-            'quantity.integer' => 'Số lượng phải là một số nguyên.',
-            'quantity.min' => 'Số lượng phải lớn hơn 0.',
-            'discount_percentage.required' => 'Giảm giá không được bỏ trống.',
-            'discount_percentage.numeric' => 'Giảm giá phải là một số.',
-            'max_discount_amount.required' => 'Giảm tối đa không được bỏ trống.',
-            'max_discount_amount.numeric' => 'Giảm tối đa phải là một số.',
-        ]);
-
-        $voucher = Voucher::findOrFail($id);
-        $voucher->update($request->all());
-
-        return redirect()->route('admin.vouchers_index')->with('success', 'Cập nhật thành công.');
+        return $this->voucherService->update($request, $voucher);
     }
 
-    public function delete(Voucher $voucher)
+    public function delete(Request $request)
     {
-
-            // Kiểm tra xem voucher có tồn tại không
-            if (!$voucher) {
-                return redirect()->route('admin.vouchers_index')->with('error', TextSystemConst::DELETE_FAILED);
-            }
-
-            // Thử xóa voucher
-            $result = $voucher->delete(); // Sử dụng soft delete nếu bật SoftDeletes
-
-            // Kiểm tra kết quả xóa
-            if ($result) {
-                return redirect()->route('admin.vouchers_index')->with('success', 'Xóa thành công.');
-            }
-
-            return redirect()->route('admin.vouchers_index')->with('error', TextSystemConst::DELETE_FAILED);
-        
+        return $this->voucherService->delete($request);
     }
 }
