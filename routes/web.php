@@ -27,16 +27,17 @@ Route::middleware(['maintenance'])->group(function () {
     Route::get('search', [SearchController::class, "search"])->name('user.search');
     //FE: Trang hiển thị sản phẩm theo danh mục
     Route::get('products/{slug}', [ProductController::class, "index"])->name('user.products');
-    
+
     Route::middleware('guest')->group(function () {
         //FE: Trang đăng nhập
         Route::get('login', [AuthenticatedSessionController::class, "create"])->name('user.login');
         Route::post('login', [AuthenticatedSessionController::class, "store"]);
-    
+
         //FE: Trang đăng ký
         Route::get('register', [RegisterController::class, "create"])->name('user.register');
         Route::post('register', [RegisterController::class, "store"]);
 
+        
         //FE: Trang xác thực tài khoản
         Route::get('verify-email/{user}', [RegisterController::class, "verifyEmail"])
             ->name('user.verification.notice');
@@ -46,7 +47,7 @@ Route::middleware(['maintenance'])->group(function () {
 
         //FE: Trang xác thực tài khoản thành công
         Route::get('verify-success', [RegisterController::class, "success"])->name('user.verify.success');
-        
+
         //FE: Trang quên mật khẩu
         Route::get('forgot-password', [ForgotPasswordController::class, "create"])->name('user.forgot_password_create');
         Route::post('forgot-password', [ForgotPasswordController::class, "store"])->name('user.forgot_password_store');
@@ -54,7 +55,7 @@ Route::middleware(['maintenance'])->group(function () {
         //FE: Trang đổi mật khẩu mới khi quên mật khẩu
         Route::get('account/change-new-password', [ForgotPasswordController::class, "changePassword"])->name('user.change_new_password');
         Route::post('account/change-new-password', [ForgotPasswordController::class, "updatePassword"]);
-    
+
     });
 });
 Route::middleware(['auth.user'])->group(function () {
