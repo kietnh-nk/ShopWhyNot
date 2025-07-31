@@ -24,7 +24,7 @@ class ProductReviewRepository extends BaseRepository
     public function checkUserBuyProduct($productId, $userId)
     {
         return DB::select("
-            select * from products 
+            select * from products
             join products_color on products.id = products_color.product_id
             join products_size on products_color.id = products_size.product_color_id
             join order_details on order_details.product_size_id = products_size.id
@@ -42,8 +42,8 @@ class ProductReviewRepository extends BaseRepository
     public function getRatingByProduct($productId)
     {
         return DB::select("
-            select count(*) as sum, product_reviews.product_id, product_reviews.rating from products 
-            join product_reviews on products.id = product_reviews.product_id 
+            select count(*) as sum, product_reviews.product_id, product_reviews.rating from products
+            join product_reviews on products.id = product_reviews.product_id
             where products.id = $productId
             and product_reviews.deleted_at is null
             group by product_reviews.product_id, product_reviews.rating
@@ -69,7 +69,7 @@ class ProductReviewRepository extends BaseRepository
         //     select users.name as user_name, product_reviews.* from products join product_reviews on products.id = product_reviews.product_id
         //     join users on users.id = product_reviews.user_id
         //     and users.active = 1
-        //     and product_reviews.deleted_at is null 
+        //     and product_reviews.deleted_at is null
         //     and users.deleted_at is null
         //     and product_reviews.product_id = $productId
         //     order by id desc;
