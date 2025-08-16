@@ -1,146 +1,95 @@
-@extends('layouts.client')
-@section('content-client')
-<div class="container_fullwidth content-page">
-    <div class="container">
-        <div class="col-md-12 container-page">
-            <div class="checkout-page">
-              <ol class="checkout-steps">
-                  <h4 class="title-steps text-center" style="padding-top: 25px;font-weight: 600;font-size: 25px;">
-                    Đăng Kí Tài Khoản
-                  </h4>
-                  <div class="step-description">
-                    <div class="row">
-                      <div class="col-md-12 col-sm-12">
-                        <div class="run-customer">
-                          <div id="form-data" hidden data-rules="{{ json_encode($rules) }}"
-                          data-messages="{{ json_encode($messages) }}"></div>
-                          <form action="{{ route('user.register') }}" method="POST" id="form__js">
-                            @csrf
-                            <div class="form-group">
-                              <label for="exampleInputEmail1">Họ Và Tên</label>
-                              <input type="text" class="form-control" value="{{ old('name') }}" id="name" name="name" aria-describedby="emailHelp" placeholder="Nhập họ và tên">
-                              @if ($errors->get('name'))
-                                <span id="name-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('name')) }}
-                                </span>
-                              @endif
+@extends('fontend.home.layout')
+@section('page_title')
+    Đăng ký
+@endsection
+@section('content')
+    <section>
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-8 col-12">
+                    <div class="card border-0 shadow-sm mt-4 card-bg-fill">
+
+                        <div class="card-body p-4">
+                            <div class="text-center mt-2">
+                                <h5 class="text-body fz-18">Đăng ký!</h5>
+                                <p class="text-muted fz-14">Đăng ký ngay để có thể trải nghiệm website!</p>
                             </div>
-                            <div class="form-group">
-                              <label for="exampleInputEmail1">Email</label>
-                              <input type="email" class="form-control" value="{{ old('email') }}" id="email" name="email" aria-describedby="emailHelp" placeholder="Nhập email">
-                              @if ($errors->get('email'))
-                                <span id="email-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('email')) }}
-                                </span>
-                              @endif
-                            </div>
-                            <div class="form-group">
-                              <label for="exampleInputPassword1">Mật Khẩu</label>
-                              <input type="password" class="form-control" value="{{ old('password') }}" id="password" name="password" placeholder="Nhập mật khẩu">
-                              @if ($errors->get('password'))
-                                <span id="password-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('password')) }}
-                                </span>
-                              @endif
-                            </div>
-                            <div class="form-group">
-                              <label for="exampleInputPassword1">Xác Nhận Mật Khẩu</label>
-                              <input type="password" class="form-control" value="{{ old('password_confirmation') }}" id="password_confirm" name="password_confirm" placeholder="Xác nhận mật khẩu">
-                              @if ($errors->get('password_confirm'))
-                                <span id="password_confirm-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('password_confirm')) }}
-                                </span>
-                              @endif
-                            </div>
-                            <div class="form-group">
-                              <label for="exampleInputEmail1">Số Điện Thoại</label>
-                              <input type="text" class="form-control" value="{{ old('phone_number') }}" id="phone_number" name="phone_number" aria-describedby="emailHelp" placeholder="Nhập số điện thoại">
-                              @if ($errors->get('phone_number'))
-                                <span id="phone_number-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('phone_number')) }}
-                                </span>
-                                @endif
-                            </div>
-                            <div class="form-group">
-                              <label for="exampleInputEmail1">Tỉnh, Thành Phố</label>
-                              <select class="form-control form-select" id="city" name="city">
-                                @foreach ($citys as $city)
-                                    <option value="{{ $city['ProvinceID'] }}"
-                                    @if ( $city['ProvinceID'] == old('city'))
-                                        selected
+                            <div class="p-2 mt-4">
+                                <form action="{{ route('store.register') }}" method="POST">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Họ tên</label>
+                                        <input type="text" class="form-control" name="name" id="name"
+                                            placeholder="Nhập họ tên" value="{{ old('name') }}">
+                                        @if ($errors->has('name'))
+                                            <span class="text-danger fz-12 mt-1">{{ $errors->first('name') }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="text" class="form-control" name="email" id="email"
+                                            placeholder="Nhập email" value="{{ old('email') }}">
+                                        @if ($errors->has('email'))
+                                            <span class="text-danger fz-12 mt-1">{{ $errors->first('email') }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="password-input">Mật khẩu</label>
+                                        <div class="input-group flex-nowrap">
+                                            <input type="password" class="form-control input-group-password"
+                                                id="password-input" name="password" placeholder="Nhập mật khẩu">
+                                            <span class="input-group-text icon-eye-password" id="addon-wrapping">
+                                                <i class="fa-solid fa-eye"></i>
+                                                <i class="fa-solid fa-eye-slash d-none"></i>
+                                            </span>
+                                        </div>
+                                        @if ($errors->has('password'))
+                                            <span class="text-danger fz-12 mt-1">{{ $errors->first('password') }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="password-confirm">Xác nhận mật khẩu</label>
+                                        <div class="input-group flex-nowrap">
+                                            <input type="password" class="form-control input-group-password"
+                                                id="password-confirm" name="password_confirmation"
+                                                placeholder="Xác nhận mật khẩu" value="">
+                                            <span class="input-group-text icon-eye-password" id="addon-wrapping">
+                                                <i class="fa-solid fa-eye"></i>
+                                                <i class="fa-solid fa-eye-slash d-none"></i>
+                                            </span>
+                                        </div>
+                                        @if ($errors->has('password_confirmation'))
+                                            <span
+                                                class="text-danger fz-12 mt-1">{{ $errors->first('password_confirmation') }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="form-check">
+                                        <input required class="form-check-input" type="checkbox" name="accept_clause"
+                                            value="" id="auth-remember-check"
+                                            {{ old('accept_clause') ? 'checked' : '' }}>
+                                        <label class="form-check-label fz-14" for="auth-remember-check">Chấp nhận điều khoản
+                                            <a href="#" class="text-decoration-underline">của chúng tôi!</a>
+                                        </label>
+                                    </div>
+                                    @if ($errors->has('accept_clause'))
+                                        <span class="text-danger fz-12 ">{{ $errors->first('accept_clause') }}</span>
                                     @endif
-                                    >{{ $city['NameExtension'][1] }}</option>
-                                @endforeach
-                              </select>
-                              @if ($errors->get('city'))
-                                <span id="city-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('city')) }}
-                                </span>
-                              @endif
+                                    <div class="mt-4">
+                                        <button class="btn btn-success w-100" type="submit">Đăng ký</button>
+                                    </div>
+                                    
+                                </form>
                             </div>
-                            <div class="form-group">
-                              <label for="exampleInputEmail1">Quận, Huyện</label>
-                              <select class="form-control form-select" id="district" name="district">
-                                @foreach ($districts as $district)
-                                    <option value="{{ $district['DistrictID'] }}"
-                                    @if ( $district['DistrictID'] == old('district'))
-                                        selected
-                                    @endif
-                                    >{{ $district['DistrictName'] }}</option>
-                                @endforeach
-                              </select>
-                              @if ($errors->get('district'))
-                                <span id="district-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('district')) }}
-                                </span>
-                              @endif
+                            <div class="mt-4 text-center fz-14">
+                                <p class="mb-0">Đã có tài khoản ?
+                                    <a href="{{ route('auth.login') }}"
+                                        class="fw-semibold text-primary text-decoration-underline"> Đăng nhập </a>
+                                </p>
                             </div>
-                            <div class="form-group">
-                              <label for="exampleInputEmail1">Phường Xã</label>
-                              <select class="form-control form-select" id="ward" name="ward">
-                                @foreach ($wards as $ward)
-                                    <option value="{{ $ward['WardCode'] }}"
-                                    @if ( $ward['WardCode'] == old('ward'))
-                                      selected
-                                    @endif
-                                    >{{ $ward['WardName'] }}</option>
-                                @endforeach
-                              </select>
-                              @if ($errors->get('ward'))
-                                <span id="ward-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('ward')) }}
-                                </span>
-                              @endif
-                            </div>
-                            <div class="form-group">
-                              <label for="exampleInputEmail1">Địa Chỉ Nhà</label>
-                              <input type="text" class="form-control" value="{{ old('apartment_number') }}" id="apartment_number" name="apartment_number" aria-describedby="emailHelp" placeholder="Nhập địa chỉ nhà">
-                              @if ($errors->get('apartment_number'))
-                                <span id="apartment_number-error" class="error invalid-feedback" style="display: block">
-                                  {{ implode(", ",$errors->get('apartment_number')) }}
-                                </span>
-                              @endif
-                            </div>
-                            <div class="text-center">
-                              <button class="btn btn-primary">
-                                Đăng Kí
-                              </button>
-                            </div>
-                            <div class="content-footer">
-                              <span>Bạn đã có tài khoản?</span>
-                              <a href="{{ route('user.login') }}">
-                                Đăng nhập
-                              </a>
-                          </div>
-                          </form>
                         </div>
-                      </div>
                     </div>
-                  </div>
-              </ol>
+                </div>
             </div>
-          </div>
-    </div>
-</div>
-@vite(['resources/client/js/register.js'])
+        </div>
+    </section>
 @endsection

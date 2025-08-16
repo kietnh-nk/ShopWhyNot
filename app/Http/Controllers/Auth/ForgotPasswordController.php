@@ -3,144 +3,117 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ChangePasswordRequest;
-use App\Http\Requests\Auth\ChangeNewPasswordRequest;
-use App\Models\User;
-use App\Models\UserVerify;
-use App\Notifications\VerifyUserForgotPassword;
-use App\Notifications\VerifyUserRegister;
-use App\Repository\Eloquent\UserRepository;
-use Carbon\Carbon;
-use Exception;
+use App\Http\Requests\StoreChangePassRequest;
+use App\Http\Requests\StoreResetPassRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Mail\OtpMail;
 
 class ForgotPasswordController extends Controller
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
-     * UserService constructor.
-     *
-     * @param UserRepository $userRepository
-     */
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
-    public function create()
+    // Hiển thị form nhập email
+    public function emailForm()
     {
         return view('auth.forgot-password');
     }
 
-    public function store(Request $request)
+    // Gửi email chứa mã OTP
+    public function sendEmail(StoreChangePassRequest $request)
     {
-        $user = $this->userRepository->whereFirst(['email' => $request->email]);
-        if (! $user) {
-            throw ValidationException::withMessages([
-                'email' => 'Địa chỉ email không tồn tại',
-            ]);
+        $email = $request->only('email');
+        // dd($email);
+        $user = User::where('email', $email)->first();
+        if ($user) {
+            $otp = rand(100000, 999999);
+            $sessionOtp = $request->session()->put('otp', $otp);
+            $sessionOtp = $request->session()->put('email', $email);
+
+            Mail::to($user->email)->send(new OtpMail($otp));
+
+            flash()->success('OTP đã được gửi về gmail'); // ở đây mới có error ssuccess war đủ loại
+            return redirect()->route('password.otp');
         }
-        $token = Str::random(64);
-        $time = Config::get('auth.verification.expire.resend', 60);
-        DB::beginTransaction();
-        UserVerify::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'token' => $token,
-                'expires_at' => Carbon::now()->addMinutes($time),
-            ]
-        );
-        $user->notify(new VerifyUserForgotPassword($token));
-        DB::commit();
-        return back()->with('notify', 'Chúng tôi đã gởi liên kết xác nhận vào email của bạn vui lòng kiểm tra');
+        flash()->error('Email của bạn chưa đăng ký');
+        return back();
     }
 
-    public function changePassword(Request $request)
-    {
-        if ($request->token) {
-            $token = $request->token;
-            $verifyUser = UserVerify::where('token', $token)->first();
-            if (empty($verifyUser) || empty($verifyUser->user)) {
-                return redirect()->route('user.login')->with('error', __('message.token_is_invalid'));
-            }
-            $date1 = Carbon::createFromFormat('Y-m-d H:i:s', $verifyUser->expires_at);
-            $date2 = Carbon::now();
-            $result = $date1->gt($date2);
-            if (!$result) {
-                return redirect()->route('user.login');
-            }
 
-            //Rules form
-            $rules = [
-                'password' => [
-                    'required' => true,
-                    'minlength' => 8,
-                    'maxlength' => 24,
-                    'checklower' => true,
-                    'checkupper' => true,
-                    'checkdigit' => true,
-                    'checkspecialcharacter' => true,
-                ],
-                'password_confirm' => [
-                    'equalTo' => '#password',
-                ],
-            ];
-    
-            // Messages eror rules
-            $messages = [
-                'password' => [
-                    'required' => __('message.required', ['attribute' => 'mật khẩu mới']),
-                    'minlength' => __('message.min', ['attribute' => 'Mật khẩu mới', 'min' => 8]),
-                    'maxlength' => __('message.max', ['attribute' => 'Mật khẩu mới', 'max' => 24]),
-                    'checklower' => __('message.password.at_least_one_lowercase_letter_is_required'),
-                    'checkupper' => __('message.password.at_least_one_uppercase_letter_is_required'),
-                    'checkdigit' => __('message.password.at_least_one_digit_is_required'),
-                    'checkspecialcharacter' => __('message.password.at_least_special_characte_is_required'),
-                ],
-                'password_confirm' => [
-                    'equalTo' => 'Xác nhận mật khẩu không trùng khớp',
-                ],
-            ];
-            
-            return view('auth.change-password', [
-                'rules' => $rules,
-                'messages' => $messages,
-                'token' => $request->token,
-            ]);
-        }
-        return redirect()->route('user.login');
+    // Hiển thị form nhập OTP
+    public function otpForm()
+    {
+        return view('auth.otp');
     }
 
-    public function updatePassword(ChangeNewPasswordRequest $request)
+    // Xác thực mã OTP
+    public function verifyOtp(Request $request)
     {
-        if ($request->token) {
-            $token = $request->token;
-            $verifyUser = UserVerify::where('token', $token)->first();
-            if (empty($verifyUser) || empty($verifyUser->user)) {
-                return redirect()->route('user.login')->with('error', __('message.token_is_invalid'));
-            }
-            $date1 = Carbon::createFromFormat('Y-m-d H:i:s', $verifyUser->expires_at);
-            $date2 = Carbon::now();
-            $result = $date1->gt($date2);
-            if (!$result) {
-                return redirect()->route('user.login');
-            }
+        $request->validate(['otp' => 'required|digits:6']);
 
-            $data = [
-                'password' => $request->password,
-                'updated_by' => $verifyUser->user->id,
-            ];
-            $this->userRepository->update($verifyUser->user, $data);
-            $verifyUser->delete();
-            return redirect()->route('user.verify.success')->with('status', 'forgot-password-success');
+        // Lấy email đã lưu trong session
+        $email = $request->session()->get('email');
+        $stringEmail = implode(',',  $email);
+        // dd($stringEmail);
+
+        if ($request->otp == $request->session()->get('otp')) {
+            $request->session()->forget(['otp']);
+
+            flash()->success('Đổi Mật khẩu mới');
+            return redirect()->route('password.reset');
         }
-        return redirect()->route('user.login');
+
+        flash()->error('Mã OTP không đúng');
+        return back();
+    }
+
+    public function resendOtp(Request $request)
+    {
+        // Lấy email từ session
+        $email = $request->session()->get('email');
+
+        // Kiểm tra nếu có email trong session
+        if ($email) {
+            $user = User::where('email', $email)->first();
+
+            if ($user) {
+                $otp = rand(100000, 999999);
+                $request->session()->put('otp', $otp);
+
+                Mail::to($user->email)->send(new OtpMail($otp));
+
+                flash()->success('Mã OTP mới đã được gửi lại');
+                return redirect()->route('password.otp');
+            }
+        }
+
+        flash()->error('Gửi lại OTP lỗi');
+        return redirect()->route('password.reset');
+    }
+
+
+    public function resetForm(Request $request)
+    {
+        $email = $request->email ?? $request->session()->get('email');
+        return view('auth.reset-password', compact('email'));
+    }
+
+    public function reset(StoreResetPassRequest $request)
+    {
+        $email = $request->session()->get('email');
+        $user = User::where('email', $email)->first();
+        if ($user) {
+            $user->password = Hash::make($request->password);
+
+            $user->save();
+
+            $request->session()->forget('email');
+
+            flash()->success('Mật khẩu được đổi');
+            return redirect()->route('auth.login');
+        }
+
+        flash()->error('Lỗi đổi mật khẩu mới');
+        return back();
     }
 }
